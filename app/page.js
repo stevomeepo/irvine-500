@@ -1872,7 +1872,7 @@ export default function Home() {
                       </span>
                       <div className="h-6 rounded bg-[#111113]">
                         <div
-                          className="grid h-6 place-items-end rounded bg-[#58a84f] pr-2 text-xs font-black text-white"
+                          className="flex h-6 items-center justify-end rounded bg-[#58a84f] pr-2 text-xs font-black leading-none text-white"
                           style={{ width }}
                         >
                           {count}
