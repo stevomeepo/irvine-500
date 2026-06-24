@@ -74,6 +74,10 @@ body > div {
     --board-gap: clamp(0.18rem, calc(var(--app-vh) * 0.62), 0.34rem);
     --board-font: clamp(1.1rem, calc(var(--app-vh) * 4), 1.75rem);
     --keyboard-margin: clamp(0.8rem, calc(var(--app-vh) * 2.45), 1.15rem);
+    --keyboard-pad: clamp(0.24rem, 1.25vw, 0.38rem);
+    --key-height: clamp(1.65rem, 8.35vw, 2.08rem);
+    --key-width: clamp(1.55rem, 8vw, 2.05rem);
+    --key-gap: clamp(0.12rem, 0.95vw, 0.24rem);
   }
 }
 
