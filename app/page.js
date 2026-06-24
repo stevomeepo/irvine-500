@@ -1470,7 +1470,7 @@ export default function Home() {
           style={{ width: "var(--board-width)" }}
         >
           <div className="mb-1.5 flex min-h-6 items-center justify-between gap-2 px-1 text-xs font-black uppercase tracking-[0.06em] text-[#8c8c91]">
-            <p className="truncate">{message}</p>
+            <p className="truncate">{gameLoaded ? message : ""}</p>
           </div>
 
           <div
