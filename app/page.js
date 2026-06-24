@@ -464,7 +464,7 @@ async function writeClipboardText(text) {
 
 function SocialLinks() {
   return (
-    <footer className="mx-auto mt-auto mb-[var(--footer-bottom)] flex shrink-0 flex-col items-center gap-[var(--footer-gap)] pb-0">
+    <footer className="mx-auto mt-auto mb-[clamp(0.45rem,2dvh,1.25rem)] flex shrink-0 flex-col items-center gap-[clamp(0.2rem,0.6dvh,0.375rem)] pb-0">
       <div className="relative flex flex-col items-center">
         <Image
           src="/MADEBY.png"
@@ -1119,6 +1119,24 @@ export default function Home() {
   }
 
   useEffect(() => {
+    function syncViewportHeight() {
+      const height = window.visualViewport?.height ?? window.innerHeight;
+      document.documentElement.style.setProperty("--app-height", `${height}px`);
+    }
+
+    syncViewportHeight();
+    window.visualViewport?.addEventListener("resize", syncViewportHeight);
+    window.addEventListener("resize", syncViewportHeight);
+    window.addEventListener("orientationchange", syncViewportHeight);
+
+    return () => {
+      window.visualViewport?.removeEventListener("resize", syncViewportHeight);
+      window.removeEventListener("resize", syncViewportHeight);
+      window.removeEventListener("orientationchange", syncViewportHeight);
+    };
+  }, []);
+
+  useEffect(() => {
     let active = true;
 
     queueMicrotask(() => {
@@ -1336,7 +1354,7 @@ export default function Home() {
 
   return (
     <main className="game-shell h-dvh overflow-hidden overscroll-none bg-[#111111] px-5 pt-[clamp(0.5rem,1.9dvh,0.9rem)] pb-[clamp(0.25rem,1.2dvh,0.5rem)] text-[#dedede] sm:px-5">
-      <section className="mx-auto flex h-full w-full max-w-5xl flex-col gap-[var(--shell-gap)]">
+      <section className="mx-auto flex h-full w-full max-w-5xl flex-col gap-2">
         <header className="mx-auto flex w-full max-w-[34.5rem] shrink-0 items-center justify-between rounded-[14px] border border-[#363638] bg-[#202021] px-2.5 py-[clamp(0.3rem,0.95dvh,0.48rem)] shadow-[0_18px_55px_rgba(0,0,0,0.38)] sm:px-3">
           <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
             <div

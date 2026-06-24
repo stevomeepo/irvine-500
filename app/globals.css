@@ -31,70 +31,49 @@ body > div {
 }
 
 .game-shell {
-  --header-button: clamp(2.15rem, 5.7dvh, 3rem);
-  --logo-size: clamp(2.15rem, 5.7dvh, 3rem);
-  --logo-font: clamp(0.7rem, 1.9dvh, 1.2rem);
-  --shell-gap: clamp(0.35rem, 1.1dvh, 0.5rem);
-  --board-width: min(calc(100vw - 2rem), clamp(17rem, 45dvh, 36rem));
-  --board-gap: clamp(0.22rem, 0.76dvh, 0.4rem);
-  --board-font: clamp(1.25rem, 4.45dvh, 2rem);
-  --keyboard-margin: clamp(0.45rem, 1.8dvh, 1rem);
-  --keyboard-pad: clamp(0.35rem, 1.1dvh, 0.5rem);
-  --key-height: clamp(1.95rem, 5.05dvh, 2.5rem);
-  --key-width: clamp(2.15rem, 5.65dvh, 2.75rem);
-  --key-gap: clamp(0.22rem, 0.75dvh, 0.375rem);
-  --footer-madeby: clamp(2.55rem, 7.4dvh, 4rem);
-  --social-size: clamp(1.85rem, 4.8dvh, 2.25rem);
-  --footer-bottom: clamp(0.45rem, 2dvh, 1.25rem);
-  --footer-gap: clamp(0.2rem, 0.6dvh, 0.375rem);
+  --app-vh: calc(var(--app-height, 100dvh) / 100);
+  --header-button: clamp(2.15rem, calc(var(--app-vh) * 5.7), 3rem);
+  --logo-size: clamp(2.15rem, calc(var(--app-vh) * 5.7), 3rem);
+  --logo-font: clamp(0.7rem, calc(var(--app-vh) * 1.9), 1.2rem);
+  --board-width: min(calc(100vw - 2rem), clamp(17rem, calc(var(--app-vh) * 45), 36rem));
+  --board-gap: clamp(0.22rem, calc(var(--app-vh) * 0.76), 0.4rem);
+  --board-font: clamp(1.25rem, calc(var(--app-vh) * 4.45), 2rem);
+  --keyboard-margin: clamp(0.55rem, calc(var(--app-vh) * 1.9), 1.05rem);
+  --keyboard-pad: clamp(0.35rem, calc(var(--app-vh) * 1.1), 0.5rem);
+  --key-height: clamp(1.95rem, calc(var(--app-vh) * 5.05), 2.5rem);
+  --key-width: clamp(2.15rem, calc(var(--app-vh) * 5.65), 2.75rem);
+  --key-gap: clamp(0.22rem, calc(var(--app-vh) * 0.75), 0.375rem);
+  --footer-madeby: clamp(2.55rem, calc(var(--app-vh) * 7.4), 4rem);
+  --social-size: clamp(1.85rem, calc(var(--app-vh) * 4.8), 2.25rem);
+  height: var(--app-height, 100dvh);
 }
 
 @media (max-height: 680px) {
   .game-shell {
-    --header-button: clamp(1.95rem, 5.2dvh, 2.6rem);
-    --logo-size: clamp(1.95rem, 5.2dvh, 2.6rem);
-    --logo-font: clamp(0.62rem, 1.7dvh, 1rem);
-    --shell-gap: clamp(0.26rem, 0.8dvh, 0.42rem);
-    --board-width: min(calc(100vw - 2rem), clamp(15.5rem, 40dvh, 35rem));
-    --board-gap: clamp(0.16rem, 0.55dvh, 0.32rem);
-    --board-font: clamp(1.05rem, 3.9dvh, 1.65rem);
-    --keyboard-margin: clamp(0.62rem, 1.9dvh, 0.9rem);
-    --keyboard-pad: clamp(0.3rem, 0.9dvh, 0.42rem);
-    --key-height: clamp(1.65rem, 4.7dvh, 2.25rem);
-    --key-width: clamp(1.85rem, 5.2dvh, 2.45rem);
-    --key-gap: clamp(0.16rem, 0.55dvh, 0.32rem);
-    --footer-madeby: clamp(2rem, 6.2dvh, 3.2rem);
-    --social-size: clamp(1.55rem, 4.2dvh, 2rem);
-    --footer-bottom: clamp(0.18rem, 0.8dvh, 0.55rem);
-    --footer-gap: clamp(0.12rem, 0.4dvh, 0.25rem);
+    --header-button: clamp(1.95rem, calc(var(--app-vh) * 5.2), 2.6rem);
+    --logo-size: clamp(1.95rem, calc(var(--app-vh) * 5.2), 2.6rem);
+    --logo-font: clamp(0.62rem, calc(var(--app-vh) * 1.7), 1rem);
+    --board-width: min(calc(100vw - 2rem), clamp(15.5rem, calc(var(--app-vh) * 40), 35rem));
+    --board-gap: clamp(0.16rem, calc(var(--app-vh) * 0.55), 0.32rem);
+    --board-font: clamp(1.05rem, calc(var(--app-vh) * 3.9), 1.65rem);
+    --keyboard-margin: clamp(0.68rem, calc(var(--app-vh) * 2.1), 1rem);
+    --keyboard-pad: clamp(0.3rem, calc(var(--app-vh) * 0.9), 0.42rem);
+    --key-height: clamp(1.65rem, calc(var(--app-vh) * 4.7), 2.25rem);
+    --key-width: clamp(1.85rem, calc(var(--app-vh) * 5.2), 2.45rem);
+    --key-gap: clamp(0.16rem, calc(var(--app-vh) * 0.55), 0.32rem);
+    --footer-madeby: clamp(2rem, calc(var(--app-vh) * 6.2), 3.2rem);
+    --social-size: clamp(1.55rem, calc(var(--app-vh) * 4.2), 2rem);
   }
 }
 
 @media (max-width: 640px) {
   .game-shell {
-    --logo-size: clamp(1.75rem, 4.8dvh, 2.25rem);
-    --logo-font: clamp(0.56rem, 1.55dvh, 0.85rem);
-    --shell-gap: clamp(0.3rem, 0.9dvh, 0.45rem);
-    --board-width: min(calc(100vw - 3.25rem), clamp(14.75rem, 40dvh, 31rem));
-    --board-gap: clamp(0.18rem, 0.62dvh, 0.34rem);
-    --board-font: clamp(1.1rem, 4dvh, 1.75rem);
-    --keyboard-margin: clamp(0.78rem, 2.35dvh, 1.15rem);
-    --footer-madeby: clamp(1.85rem, 5.1dvh, 3.05rem);
-    --social-size: clamp(1.42rem, 3.8dvh, 1.9rem);
-  }
-}
-
-@media (max-width: 640px) and (max-height: 720px) {
-  .game-shell {
-    --shell-gap: clamp(0.22rem, 0.65dvh, 0.34rem);
-    --board-width: min(calc(100vw - 3.25rem), clamp(13.75rem, calc(100dvh - 24rem), 30rem));
-    --board-gap: clamp(0.15rem, 0.5dvh, 0.28rem);
-    --board-font: clamp(1rem, 3.5dvh, 1.5rem);
-    --keyboard-margin: clamp(0.85rem, 2.4dvh, 1.1rem);
-    --footer-madeby: clamp(1.35rem, 4dvh, 2.2rem);
-    --social-size: clamp(1.15rem, 3.2dvh, 1.55rem);
-    --footer-bottom: clamp(0.08rem, 0.35dvh, 0.25rem);
-    --footer-gap: clamp(0.08rem, 0.25dvh, 0.16rem);
+    --logo-size: clamp(1.75rem, calc(var(--app-vh) * 4.8), 2.25rem);
+    --logo-font: clamp(0.56rem, calc(var(--app-vh) * 1.55), 0.85rem);
+    --board-width: min(calc(100vw - 3rem), clamp(15.25rem, calc(var(--app-vh) * 40), 32rem));
+    --board-gap: clamp(0.18rem, calc(var(--app-vh) * 0.62), 0.34rem);
+    --board-font: clamp(1.1rem, calc(var(--app-vh) * 4), 1.75rem);
+    --keyboard-margin: clamp(0.8rem, calc(var(--app-vh) * 2.45), 1.15rem);
   }
 }
 
@@ -112,10 +91,10 @@ body > div {
   }
 
   .game-shell {
-    --board-width: min(calc(100vw - 3.25rem), clamp(13rem, 34dvh, 32rem));
-    --keyboard-margin: clamp(0.7rem, 2dvh, 1rem);
-    --footer-madeby: clamp(1.1rem, 3.4dvh, 1.8rem);
-    --social-size: clamp(1rem, 2.8dvh, 1.35rem);
+    --board-width: min(calc(100vw - 3rem), clamp(14.5rem, calc(var(--app-vh) * 35), 32rem));
+    --keyboard-margin: clamp(0.7rem, calc(var(--app-vh) * 2), 1rem);
+    --footer-madeby: clamp(1.6rem, calc(var(--app-vh) * 5.4), 2.6rem);
+    --social-size: clamp(1.35rem, calc(var(--app-vh) * 3.9), 1.8rem);
     height: auto;
     min-height: 560px;
     overflow: visible;
