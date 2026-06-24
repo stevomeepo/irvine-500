@@ -113,7 +113,6 @@ const VALID_GUESS_SET = new Set([...VALID_GUESSES, ...WORD_LIST]);
 const LETTERS = 5;
 const MAX_ATTEMPTS = 8;
 const KEY_ROWS = ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"];
-const MARKS = ["", "red", "yellow", "green"];
 const STATS_KEY = "irvine500-stats";
 const GAME_KEY = "irvine500-game";
 const MODES = [
@@ -683,7 +682,6 @@ export default function Home() {
   const [restoredScoreRows, setRestoredScoreRows] = useState([]);
   const [invalidRow, setInvalidRow] = useState(null);
   const [currentGuess, setCurrentGuess] = useState("");
-  const [marks, setMarks] = useState({});
   const [message, setMessage] = useState("Irvine is waiting.");
   const [stats, setStats] = useState(defaultStats);
   const [gameLoaded, setGameLoaded] = useState(false);
@@ -720,8 +718,7 @@ export default function Home() {
     (guesses.length === MAX_ATTEMPTS && !won);
   const hasBoardProgress =
     guesses.length > 0 ||
-    currentGuess.length > 0 ||
-    Object.keys(marks).length > 0;
+    currentGuess.length > 0;
   const pendingMode = pendingModeId
     ? MODES.find((mode) => mode.id === pendingModeId)
     : null;
@@ -781,7 +778,6 @@ export default function Home() {
     setRestoredScoreRows([]);
     setInvalidRow(null);
     setCurrentGuess("");
-    setMarks({});
     setLastResult(null);
     setEndEffect(null);
     setResultOpen(false);
@@ -982,8 +978,7 @@ export default function Home() {
     applyModeChange(pendingModeId);
   }
 
-  function clearMarks() {
-    setMarks({});
+  function clearCurrentRow() {
     setCurrentGuess("");
     setInvalidRow(null);
     updateMessage("Cleared.");
@@ -1123,24 +1118,6 @@ export default function Home() {
     }
   }
 
-  function cycleMark(rowIndex, tileIndex) {
-    const key = `${rowIndex}-${tileIndex}`;
-    const currentIndex = MARKS.indexOf(marks[key] ?? "");
-    const nextMark = MARKS[(currentIndex + 1) % MARKS.length];
-
-    setMarks((currentMarks) => {
-      const nextMarks = { ...currentMarks };
-
-      if (nextMark) {
-        nextMarks[key] = nextMark;
-      } else {
-        delete nextMarks[key];
-      }
-
-      return nextMarks;
-    });
-  }
-
   useEffect(() => {
     let active = true;
 
@@ -1180,12 +1157,6 @@ export default function Home() {
             /^[A-Z_]{0,5}$/.test(parsedGame.currentGuess)
               ? parsedGame.currentGuess
               : "";
-          const savedMarks =
-            parsedGame.marks &&
-            typeof parsedGame.marks === "object" &&
-            !Array.isArray(parsedGame.marks)
-              ? parsedGame.marks
-              : {};
           const hasSavedMessage =
             typeof parsedGame.message === "string" &&
             parsedGame.message.length <= 240;
@@ -1205,7 +1176,6 @@ export default function Home() {
             setGameOffset(savedOffset);
             setGuesses(restoredGuesses);
             setCurrentGuess(savedCurrentGuess);
-            setMarks(savedMarks);
             setAnimatedRows([]);
             setFinalLetterRows([]);
             setRestoredScoreRows(restoredGuesses.map((_, index) => index));
@@ -1289,7 +1259,6 @@ export default function Home() {
         dayKey: gameDayKey(),
         gameOffset,
         guesses,
-        marks,
         message,
         modeId,
         lastResult,
@@ -1301,7 +1270,6 @@ export default function Home() {
     gameOffset,
     guesses,
     lastResult,
-    marks,
     message,
     modeId,
   ]);
@@ -1497,24 +1465,17 @@ export default function Home() {
                   key={`row-${rowIndex}`}
                 >
                   {Array.from({ length: LETTERS }, (_, tileIndex) => {
-                    const mark =
-                      marks[`${rowIndex}-${tileIndex}`] ??
-                      row.feedback?.[tileIndex];
+                    const mark = row.feedback?.[tileIndex];
                     const hasGuess = Boolean(row.guess);
 
                     return (
-                      <button
-                        type="button"
-                        onClick={() => hasGuess && cycleMark(rowIndex, tileIndex)}
-                        disabled={!hasGuess}
+                      <div
                         className={`grid aspect-square min-h-0 min-w-0 place-items-center rounded-md text-[length:var(--board-font)] font-black leading-none uppercase transition ${markClasses(
                           mark,
                         )} ${
                           shouldAnimateLetters
-                            ? "letter-reveal hover:brightness-110"
-                            : hasGuess
-                              ? "hover:brightness-110"
-                              : ""
+                            ? "letter-reveal"
+                            : ""
                         }`}
                         style={
                           shouldAnimateLetters
@@ -1522,10 +1483,9 @@ export default function Home() {
                             : undefined
                         }
                         key={`tile-${rowIndex}-${tileIndex}`}
-                        title={hasGuess ? "Cycle mark" : undefined}
                       >
                         {row.letters[tileIndex] ?? ""}
-                      </button>
+                      </div>
                     );
                   })}
 
@@ -1618,13 +1578,13 @@ export default function Home() {
             <div className="flex justify-center gap-[var(--key-gap)]">
               <button
                 type="button"
-                onClick={clearMarks}
+                onClick={clearCurrentRow}
                 className={`grid h-[var(--key-height)] place-items-center rounded-md bg-[#37373b] text-xs font-black text-[#d8d8da] transition hover:bg-[#444449] ${
                   showsHintKey
                     ? "w-[calc(var(--key-width)*1.65)]"
                     : "w-[calc(var(--key-width)*2.65+var(--key-gap))]"
                 }`}
-                title="Clear marks"
+                title="Clear row"
               >
                 CLR
               </button>
