@@ -1552,11 +1552,11 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="mx-auto mt-[var(--keyboard-margin)] w-fit max-w-full shrink-0 rounded-[14px] border border-[#38383b] bg-[#242426] p-[var(--keyboard-pad)] shadow-[0_18px_55px_rgba(0,0,0,0.35)]">
-          <div className="flex flex-col gap-[var(--key-gap)]">
+        <section className="mx-auto mt-[var(--keyboard-margin)] w-max shrink-0 rounded-[14px] border border-[#38383b] bg-[#242426] p-[var(--keyboard-pad)] shadow-[0_18px_55px_rgba(0,0,0,0.35)]">
+          <div className="flex w-max flex-col gap-[var(--key-gap)]">
             {KEY_ROWS.map((row, rowIndex) => (
               <div
-                className="flex justify-center gap-[var(--key-gap)]"
+                className="flex w-max justify-center gap-[var(--key-gap)]"
                 key={`keyboard-${row}`}
               >
                 {row.split("").map((letter) => {
@@ -1567,7 +1567,7 @@ export default function Home() {
                       type="button"
                       onClick={() => pressKey(letter)}
                       disabled={disabled || won || lost}
-                      className={`grid h-[var(--key-height)] w-[var(--key-width)] place-items-center rounded-md text-sm font-black transition ${
+                      className={`grid h-[var(--key-height)] w-[var(--key-width)] shrink-0 place-items-center rounded-md text-sm font-black transition ${
                         disabled
                           ? "bg-[#111113] text-[#5b5b60]"
                           : "bg-[#37373b] text-[#d8d8da] hover:bg-[#444449]"
@@ -1584,7 +1584,7 @@ export default function Home() {
                     type="button"
                     onClick={() => pressKey("BACK")}
                     disabled={won || lost}
-                    className="grid h-[var(--key-height)] w-[calc(var(--key-width)*1.28)] place-items-center rounded-md bg-[#111113] text-sm font-black text-[#77777b] transition hover:bg-[#1b1b1f]"
+                    className="grid h-[var(--key-height)] w-[calc(var(--key-width)*1.28)] shrink-0 place-items-center rounded-md bg-[#111113] text-sm font-black text-[#77777b] transition hover:bg-[#1b1b1f]"
                     title="Delete"
                   >
                     <BackspaceIcon />
@@ -1593,11 +1593,11 @@ export default function Home() {
               </div>
             ))}
 
-            <div className="flex justify-center gap-[var(--key-gap)]">
+            <div className="flex w-max justify-center gap-[var(--key-gap)]">
               <button
                 type="button"
                 onClick={clearCurrentRow}
-                className={`grid h-[var(--key-height)] place-items-center rounded-md bg-[#37373b] text-xs font-black text-[#d8d8da] transition hover:bg-[#444449] ${
+                className={`grid h-[var(--key-height)] shrink-0 place-items-center rounded-md bg-[#37373b] text-xs font-black text-[#d8d8da] transition hover:bg-[#444449] ${
                   showsHintKey
                     ? "w-[calc(var(--key-width)*1.65)]"
                     : "w-[calc(var(--key-width)*2.65+var(--key-gap))]"
@@ -1610,7 +1610,7 @@ export default function Home() {
                 <button
                   type="button"
                   onClick={addHint}
-                  className="grid h-[var(--key-height)] w-[var(--key-width)] place-items-center rounded-md bg-[#111113] text-base font-black text-[#77777b] transition hover:bg-[#1b1b1f]"
+                  className="grid h-[var(--key-height)] w-[var(--key-width)] shrink-0 place-items-center rounded-md bg-[#111113] text-base font-black text-[#77777b] transition hover:bg-[#1b1b1f]"
                   title="Hint"
                 >
                   <HintIcon />
@@ -1620,7 +1620,7 @@ export default function Home() {
                 type="button"
                 onClick={() => pressKey("SPACE")}
                 disabled={won || lost}
-                className="grid h-[var(--key-height)] w-[calc(var(--key-width)*5.45)] place-items-center rounded-md bg-[#37373b] text-xs font-black uppercase tracking-[0.24em] text-[#d8d8da] transition hover:bg-[#444449]"
+                className="grid h-[var(--key-height)] w-[calc(var(--key-width)*5.45)] shrink-0 place-items-center rounded-md bg-[#37373b] text-xs font-black uppercase tracking-[0.24em] text-[#d8d8da] transition hover:bg-[#444449]"
               >
                 Space
               </button>
@@ -1628,7 +1628,7 @@ export default function Home() {
                 type="button"
                 onClick={() => pressKey("ENTER")}
                 disabled={won || lost}
-                className="grid h-[var(--key-height)] w-[var(--key-width)] place-items-center rounded-md bg-[#111113] text-base font-black text-[#77777b] transition hover:bg-[#1b1b1f]"
+                className="grid h-[var(--key-height)] w-[var(--key-width)] shrink-0 place-items-center rounded-md bg-[#111113] text-base font-black text-[#77777b] transition hover:bg-[#1b1b1f]"
                 title="Submit"
               >
                 <CheckIcon />
