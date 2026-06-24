@@ -1,0 +1,316 @@
+@import "tailwindcss";
+
+:root {
+  --background: #111111;
+  --foreground: #dedede;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  touch-action: manipulation;
+}
+
+body > div {
+  height: 100%;
+  overflow: hidden;
+}
+
+.game-shell {
+  --header-button: clamp(2.15rem, 5.7dvh, 3rem);
+  --logo-size: clamp(2.15rem, 5.7dvh, 3rem);
+  --logo-font: clamp(0.7rem, 1.9dvh, 1.2rem);
+  --board-width: min(calc(100vw - 2rem), clamp(17rem, 45dvh, 36rem));
+  --board-gap: clamp(0.22rem, 0.76dvh, 0.4rem);
+  --board-font: clamp(1.25rem, 4.45dvh, 2rem);
+  --key-height: clamp(1.95rem, 5.05dvh, 2.5rem);
+  --key-width: clamp(2.15rem, 5.65dvh, 2.75rem);
+  --key-gap: clamp(0.22rem, 0.75dvh, 0.375rem);
+  --footer-madeby: clamp(2.55rem, 7.4dvh, 4rem);
+  --social-size: clamp(1.85rem, 4.8dvh, 2.25rem);
+}
+
+@media (max-height: 680px) {
+  .game-shell {
+    --header-button: clamp(1.95rem, 5.2dvh, 2.6rem);
+    --logo-size: clamp(1.95rem, 5.2dvh, 2.6rem);
+    --logo-font: clamp(0.62rem, 1.7dvh, 1rem);
+    --board-width: min(calc(100vw - 2rem), clamp(15.5rem, 40dvh, 35rem));
+    --board-gap: clamp(0.16rem, 0.55dvh, 0.32rem);
+    --board-font: clamp(1.05rem, 3.9dvh, 1.65rem);
+    --key-height: clamp(1.65rem, 4.7dvh, 2.25rem);
+    --key-width: clamp(1.85rem, 5.2dvh, 2.45rem);
+    --key-gap: clamp(0.16rem, 0.55dvh, 0.32rem);
+    --footer-madeby: clamp(2rem, 6.2dvh, 3.2rem);
+    --social-size: clamp(1.55rem, 4.2dvh, 2rem);
+  }
+}
+
+@media (max-width: 640px) {
+  .game-shell {
+    --logo-size: clamp(1.75rem, 4.8dvh, 2.25rem);
+    --logo-font: clamp(0.56rem, 1.55dvh, 0.85rem);
+    --board-width: min(calc(100vw - 3rem), clamp(15.25rem, 42dvh, 32rem));
+    --board-gap: clamp(0.18rem, 0.62dvh, 0.34rem);
+    --board-font: clamp(1.1rem, 4dvh, 1.75rem);
+  }
+}
+
+@media (max-height: 560px) {
+  html,
+  body {
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+  }
+
+  body > div {
+    height: auto;
+    min-height: 100%;
+    overflow: visible;
+  }
+
+  .game-shell {
+    --board-width: min(calc(100vw - 3rem), clamp(14.5rem, 35dvh, 32rem));
+    --footer-madeby: clamp(1.6rem, 5.4dvh, 2.6rem);
+    --social-size: clamp(1.35rem, 3.9dvh, 1.8rem);
+    height: auto;
+    min-height: 560px;
+    overflow: visible;
+  }
+}
+
+button {
+  cursor: pointer;
+}
+
+.tile-feedback-green {
+  --tile-final-bg: #58a84f;
+  --tile-final-color: #ffffff;
+  background-color: var(--tile-final-bg);
+  color: var(--tile-final-color);
+}
+
+.tile-feedback-yellow {
+  --tile-final-bg: #d0bb59;
+  --tile-final-color: #ffffff;
+  background-color: var(--tile-final-bg);
+  color: var(--tile-final-color);
+}
+
+.tile-feedback-red {
+  --tile-final-bg: #dc494c;
+  --tile-final-color: #ffffff;
+  background-color: var(--tile-final-bg);
+  color: var(--tile-final-color);
+}
+
+.letter-reveal {
+  animation: flipping 0.5s linear;
+  animation-delay: var(--reveal-delay, 0ms);
+  transform-origin: center;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.score-spin {
+  animation: flipping 0.5s linear;
+  animation-delay: var(--score-delay, 0ms);
+  transform-origin: center;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.row-shake {
+  animation: row-shake 420ms ease;
+}
+
+@keyframes flipping {
+  0% {
+    transform: rotateX(0deg);
+  }
+
+  50% {
+    transform: rotateX(90deg);
+  }
+
+  100% {
+    transform: rotateX(0deg);
+  }
+}
+
+@keyframes row-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  18%,
+  54% {
+    transform: translateX(-0.45rem);
+  }
+
+  36%,
+  72% {
+    transform: translateX(0.45rem);
+  }
+}
+
+.celebration-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -1rem;
+  left: var(--confetti-left);
+  width: var(--confetti-size);
+  height: calc(var(--confetti-size) * 1.55);
+  border-radius: 2px;
+  background: #7bdd72;
+  box-shadow:
+    0 0 14px rgba(123, 221, 114, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.12) inset;
+  animation: confetti-fall 5200ms cubic-bezier(0.22, 0.5, 0.34, 1) both;
+  animation-delay: var(--confetti-delay);
+  transform: translateX(var(--confetti-x)) rotate(var(--confetti-rotate));
+}
+
+.confetti-piece:nth-child(3n) {
+  background: #58a84f;
+}
+
+.confetti-piece:nth-child(4n) {
+  background: #b7ff8e;
+}
+
+.confetti-piece:nth-child(5n) {
+  border-radius: 999px;
+}
+
+.cry-effect {
+  position: relative;
+  display: grid;
+  place-items: center;
+  opacity: 1;
+  animation: cry-hold 900ms cubic-bezier(0.18, 0.86, 0.28, 1) both;
+  filter: drop-shadow(0 18px 34px rgba(0, 0, 0, 0.55));
+}
+
+.cry-face {
+  font-size: clamp(5rem, 20vw, 10rem);
+  line-height: 1;
+}
+
+.tear {
+  position: absolute;
+  top: 52%;
+  width: 0.55rem;
+  height: 1.25rem;
+  border-radius: 999px;
+  background: #8fd3ff;
+  opacity: 0;
+  animation: tear-drop 820ms ease-in 260ms both;
+}
+
+.tear-left {
+  left: 24%;
+}
+
+.tear-right {
+  right: 24%;
+  animation-delay: 360ms;
+}
+
+@keyframes confetti-fall {
+  0% {
+    opacity: 0;
+    transform: translate3d(var(--confetti-x), -10vh, 0)
+      rotate(var(--confetti-rotate));
+  }
+
+  12% {
+    opacity: 1;
+  }
+
+  82% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(calc(var(--confetti-x) * -2), 190vh, 0)
+      rotate(calc(var(--confetti-rotate) + 560deg));
+  }
+}
+
+@keyframes cry-hold {
+  0% {
+    opacity: 0;
+    transform: scale(0.55) translateY(1rem);
+  }
+
+  20% {
+    opacity: 1;
+    transform: scale(1.08) translateY(0);
+  }
+
+  42% {
+    transform: scale(0.98) translateY(0.25rem) rotate(-2deg);
+  }
+
+  66% {
+    transform: scale(1.02) translateY(0) rotate(2deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes tear-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-0.3rem) scaleY(0.5);
+  }
+
+  22% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(3.25rem) scaleY(1.15);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .letter-reveal,
+  .score-spin,
+  .row-shake,
+  .confetti-piece,
+  .cry-effect,
+  .tear {
+    animation: none;
+  }
+}
