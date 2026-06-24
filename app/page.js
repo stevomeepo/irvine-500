@@ -736,6 +736,29 @@ export default function Home() {
     [answer, disabledLetters, guesses, playableWords],
   );
 
+  function updateMessage(nextMessage) {
+    setMessage(nextMessage);
+
+    if (!gameLoaded) {
+      return;
+    }
+
+    try {
+      const savedGame = JSON.parse(localStorage.getItem(GAME_KEY) || "{}");
+
+      localStorage.setItem(
+        GAME_KEY,
+        JSON.stringify({
+          ...savedGame,
+          dayKey: savedGame.dayKey || gameDayKey(),
+          message: nextMessage,
+        }),
+      );
+    } catch {
+      // The normal save effect will rewrite the full game state next render.
+    }
+  }
+
   function clearBoard(nextMessage) {
     if (resultTimerRef.current) {
       clearTimeout(resultTimerRef.current);
@@ -765,7 +788,7 @@ export default function Home() {
     setHelpOpen(false);
     setPendingModeId(null);
     setShareStatus("");
-    setMessage(nextMessage);
+    updateMessage(nextMessage);
   }
 
   function startNextGame() {
@@ -877,7 +900,7 @@ export default function Home() {
 
     const rowIndex = guesses.length;
 
-    setMessage(nextMessage);
+    updateMessage(nextMessage);
     setInvalidRow(null);
     window.requestAnimationFrame(() => {
       setInvalidRow(rowIndex);
@@ -963,7 +986,7 @@ export default function Home() {
     setMarks({});
     setCurrentGuess("");
     setInvalidRow(null);
-    setMessage("Cleared.");
+    updateMessage("Cleared.");
   }
 
   function addHint() {
@@ -972,7 +995,7 @@ export default function Home() {
     }
 
     if (modeId === "standard") {
-      setMessage(`Clue: ${WORD_CLUES[answer] ?? "Irvine knows this one."}`);
+      updateMessage(`Clue: ${WORD_CLUES[answer] ?? "Irvine knows this one."}`);
       return;
     }
 
@@ -980,12 +1003,12 @@ export default function Home() {
       candidates.find((word) => !guesses.includes(word)) ?? candidates[0];
 
     if (!nextCandidate) {
-      setMessage("No hint fits. Impressive chaos.");
+      updateMessage("No hint fits. Impressive chaos.");
       return;
     }
 
     setCurrentGuess(nextCandidate);
-    setMessage("Free word loaded. Irvine has spoken.");
+    updateMessage("Free word loaded. Irvine has spoken.");
   }
 
   function submitGuess() {
@@ -994,7 +1017,7 @@ export default function Home() {
     }
 
     if (currentGuess.length !== LETTERS || currentGuess.includes("_")) {
-      setMessage("Five letters first, superstar.");
+      updateMessage("Five letters first, superstar.");
       return;
     }
 
@@ -1042,7 +1065,7 @@ export default function Home() {
 
       showResultAfterEffect(result);
       recordResult(result);
-      setMessage(
+      updateMessage(
         nextGuesses.length === 1
           ? "One-shot legend. Irvine bows."
           : "Solved. Irvine has been defeated.",
@@ -1062,9 +1085,9 @@ export default function Home() {
 
       showResultAfterEffect(result);
       recordResult(result);
-      setMessage(`Answer: ${answer}`);
+      updateMessage(`Answer: ${answer}`);
     } else {
-      setMessage(
+      updateMessage(
         guessReactionMessage(
           currentGuess,
           currentScore,
@@ -1163,11 +1186,10 @@ export default function Home() {
             !Array.isArray(parsedGame.marks)
               ? parsedGame.marks
               : {};
-          const savedMessage =
+          const hasSavedMessage =
             typeof parsedGame.message === "string" &&
-            parsedGame.message.length <= 120
-              ? parsedGame.message
-              : "";
+            parsedGame.message.length <= 240;
+          const savedMessage = hasSavedMessage ? parsedGame.message : null;
           const savedLastResult =
             parsedGame.lastResult &&
             typeof parsedGame.lastResult === "object" &&
@@ -1199,7 +1221,7 @@ export default function Home() {
                   1,
                 modeId: savedModeId,
               });
-              setMessage(savedMessage || "Solved.");
+              setMessage(savedMessage ?? "Solved.");
             } else if (savedLastResult?.won === false) {
               setLastResult({
                 won: false,
@@ -1209,7 +1231,7 @@ export default function Home() {
                 modeId: savedModeId,
                 reason: savedLastResult.reason,
               });
-              setMessage(savedMessage || `Answer: ${savedAnswer}`);
+              setMessage(savedMessage ?? `Answer: ${savedAnswer}`);
             } else if (restoredGuesses.length >= MAX_ATTEMPTS) {
               setLastResult({
                 won: false,
@@ -1218,10 +1240,10 @@ export default function Home() {
                 guessesUsed: MAX_ATTEMPTS,
                 modeId: savedModeId,
               });
-              setMessage(savedMessage || `Answer: ${savedAnswer}`);
+              setMessage(savedMessage ?? `Answer: ${savedAnswer}`);
             } else {
               setLastResult(null);
-              setMessage(savedMessage || "Irvine is waiting.");
+              setMessage(savedMessage ?? "Irvine is waiting.");
             }
           } else {
             localStorage.removeItem(GAME_KEY);
