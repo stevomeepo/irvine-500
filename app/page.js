@@ -92,7 +92,7 @@ const WORD_CLUES = {
   TOLLS: "Accidental road tax.",
   WEEBS: "NPC Anime fans.",
   BRYAN: "Irvine road.",
-  TAIKO: "Drumroll at the plaza.",
+  TAIKO: "A nice old Japanese spot.",
   OMOMO: "Boba line favorite.",
   BISON: "Irvine road.",
   TOWED: "Parking consequence.",
@@ -732,6 +732,7 @@ export default function Home() {
   const pendingMode = pendingModeId
     ? MODES.find((mode) => mode.id === pendingModeId)
     : null;
+  const isPendingSameMode = pendingModeId === modeId;
   const candidates = useMemo(
     () =>
       playableWords.filter((word) => {
@@ -967,11 +968,6 @@ export default function Home() {
   }
 
   function chooseMode(nextModeId) {
-    if (nextModeId === modeId) {
-      setModeMenuOpen(false);
-      return;
-    }
-
     if (hasBoardProgress) {
       setPendingModeId(nextModeId);
       setModeMenuOpen(false);
@@ -1738,11 +1734,12 @@ export default function Home() {
             <div className="flex items-start justify-between gap-4">
               <div className="pt-1">
                 <h2 className="text-2xl font-semibold text-[#f0f0f1]">
-                  Switch mode?
+                  {isPendingSameMode ? "New game?" : "Switch mode?"}
                 </h2>
                 <p className="mt-2 text-sm font-semibold leading-6 text-[#b9b9bd]">
-                  Switching to {pendingMode.label} will reset your progress and
-                  pick a new word.
+                  {isPendingSameMode
+                    ? `Starting a new ${pendingMode.label} game will reset your progress and pick a new word.`
+                    : `Switching to ${pendingMode.label} will reset your progress and pick a new word.`}
                 </p>
               </div>
               <button
@@ -1769,7 +1766,7 @@ export default function Home() {
                 onClick={confirmModeChange}
                 className="rounded-lg bg-[#58a84f] px-4 py-3 text-sm font-black text-white transition hover:bg-[#67b95e]"
               >
-                Switch
+                {isPendingSameMode ? "New Game" : "Switch"}
               </button>
             </div>
           </section>
