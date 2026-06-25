@@ -55,6 +55,9 @@ const WORD_LIST = [
   "TREES",
   "SOLAR",
   "ARBOR",
+  "RIDGE",
+  "UCIPD",
+  "LAKES",
 ];
 const WORD_CLUES = {
   ALTON: "Irvine road.",
@@ -107,12 +110,16 @@ const WORD_CLUES = {
   TREES: "Every neighborhood has these.",
   SOLAR: "On half the rooftops.",
   ARBOR: "There's a 99 Ranch here.",
+  RIDGE: "Turtle Rock has one.",
+  UCIPD: "UCI enforcers.",
+  LAKES: "Known in the Woodbridge area.",
 };
 const VALID_GUESS_SET = new Set([...VALID_GUESSES, ...WORD_LIST]);
 
 const LETTERS = 5;
 const MAX_ATTEMPTS = 8;
 const KEY_ROWS = ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"];
+const MARKS = ["", "red", "yellow", "green"];
 const STATS_KEY = "irvine500-stats";
 const GAME_KEY = "irvine500-game";
 const MODES = [
@@ -121,21 +128,21 @@ const MODES = [
     label: "Irvine",
     face: "happy",
     color: "text-[#58a84f]",
-    rules: ["Free Irvine words", "No JVX"],
+    rules: ["Hints allowed", "No repeats"],
   },
   {
     id: "standard",
     label: "Irvine+",
     face: "neutral",
     color: "text-[#d0bb59]",
-    rules: ["Real words only", "Hints allowed"],
+    rules: ["No hints", "No repeats"],
   },
   {
     id: "standard-plus",
     label: "Irvine Pro",
     face: "hard",
     color: "text-[#dc494c]",
-    rules: ["Real words only", "No hints"],
+    rules: ["No hints", "Repeats allowed"],
   },
 ];
 const SOCIALS = [
@@ -240,9 +247,13 @@ function gameDayKey() {
   return new Date().toISOString().slice(0, 10);
 }
 
+function hasRepeatLetters(word) {
+  return new Set(word).size !== word.length;
+}
+
 function wordFitsMode(word, modeId) {
-  if (modeId === "baby") {
-    return !/[JVX]/.test(word);
+  if (modeId === "baby" || modeId === "standard") {
+    return !hasRepeatLetters(word);
   }
 
   return true;
@@ -682,6 +693,7 @@ export default function Home() {
   const [restoredScoreRows, setRestoredScoreRows] = useState([]);
   const [invalidRow, setInvalidRow] = useState(null);
   const [currentGuess, setCurrentGuess] = useState("");
+  const [marks, setMarks] = useState({});
   const [message, setMessage] = useState("Irvine is waiting.");
   const [stats, setStats] = useState(defaultStats);
   const [gameLoaded, setGameLoaded] = useState(false);
@@ -705,20 +717,18 @@ export default function Home() {
     [gameOffset, playableWords],
   );
   const disabledLetters = useMemo(
-    () =>
-      gameLoaded && modeId === "baby"
-        ? ["J", "V", "X"]
-        : [],
-    [gameLoaded, modeId],
+    () => [],
+    [],
   );
-  const showsHintKey = modeId === "baby" || modeId === "standard";
+  const showsHintKey = modeId === "baby";
   const won = guesses.includes(answer);
   const lost =
     (lastResult && !lastResult.won && lastResult.answer === answer) ||
     (guesses.length === MAX_ATTEMPTS && !won);
   const hasBoardProgress =
     guesses.length > 0 ||
-    currentGuess.length > 0;
+    currentGuess.length > 0 ||
+    Object.keys(marks).length > 0;
   const pendingMode = pendingModeId
     ? MODES.find((mode) => mode.id === pendingModeId)
     : null;
@@ -778,6 +788,7 @@ export default function Home() {
     setRestoredScoreRows([]);
     setInvalidRow(null);
     setCurrentGuess("");
+    setMarks({});
     setLastResult(null);
     setEndEffect(null);
     setResultOpen(false);
@@ -984,12 +995,30 @@ export default function Home() {
     updateMessage("Cleared.");
   }
 
+  function cycleMark(rowIndex, tileIndex) {
+    const key = `${rowIndex}-${tileIndex}`;
+    const currentIndex = MARKS.indexOf(marks[key] ?? "");
+    const nextMark = MARKS[(currentIndex + 1) % MARKS.length];
+
+    setMarks((currentMarks) => {
+      const nextMarks = { ...currentMarks };
+
+      if (nextMark) {
+        nextMarks[key] = nextMark;
+      } else {
+        delete nextMarks[key];
+      }
+
+      return nextMarks;
+    });
+  }
+
   function addHint() {
     if (won || lost) {
       return;
     }
 
-    if (modeId === "standard") {
+    if (modeId === "baby") {
       updateMessage(`Clue: ${WORD_CLUES[answer] ?? "Irvine knows this one."}`);
       return;
     }
@@ -1027,7 +1056,14 @@ export default function Home() {
     }
 
     if (
-      modeId !== "baby" &&
+      (modeId === "baby" || modeId === "standard") &&
+      hasRepeatLetters(currentGuess)
+    ) {
+      rejectGuess("Do you not read the rules? No repeats!");
+      return;
+    }
+
+    if (
       currentGuess !== "DIDDY" &&
       !VALID_GUESS_SET.has(currentGuess)
     ) {
@@ -1175,6 +1211,12 @@ export default function Home() {
             /^[A-Z_]{0,5}$/.test(parsedGame.currentGuess)
               ? parsedGame.currentGuess
               : "";
+          const savedMarks =
+            parsedGame.marks &&
+            typeof parsedGame.marks === "object" &&
+            !Array.isArray(parsedGame.marks)
+              ? parsedGame.marks
+              : {};
           const hasSavedMessage =
             typeof parsedGame.message === "string" &&
             parsedGame.message.length <= 240;
@@ -1194,6 +1236,7 @@ export default function Home() {
             setGameOffset(savedOffset);
             setGuesses(restoredGuesses);
             setCurrentGuess(savedCurrentGuess);
+            setMarks(savedMarks);
             setAnimatedRows([]);
             setFinalLetterRows([]);
             setRestoredScoreRows(restoredGuesses.map((_, index) => index));
@@ -1277,6 +1320,7 @@ export default function Home() {
         dayKey: gameDayKey(),
         gameOffset,
         guesses,
+        marks,
         message,
         modeId,
         lastResult,
@@ -1288,6 +1332,7 @@ export default function Home() {
     gameOffset,
     guesses,
     lastResult,
+    marks,
     message,
     modeId,
   ]);
@@ -1483,17 +1528,22 @@ export default function Home() {
                   key={`row-${rowIndex}`}
                 >
                   {Array.from({ length: LETTERS }, (_, tileIndex) => {
-                    const mark = row.feedback?.[tileIndex];
+                    const mark = marks[`${rowIndex}-${tileIndex}`];
                     const hasGuess = Boolean(row.guess);
 
                     return (
-                      <div
+                      <button
+                        type="button"
+                        onClick={() => hasGuess && cycleMark(rowIndex, tileIndex)}
+                        disabled={!hasGuess}
                         className={`grid aspect-square min-h-0 min-w-0 place-items-center rounded-md text-[length:var(--board-font)] font-black leading-none uppercase transition ${markClasses(
                           mark,
                         )} ${
                           shouldAnimateLetters
-                            ? "letter-reveal"
-                            : ""
+                            ? "letter-reveal hover:brightness-110"
+                            : hasGuess
+                              ? "hover:brightness-110"
+                              : ""
                         }`}
                         style={
                           shouldAnimateLetters
@@ -1501,9 +1551,10 @@ export default function Home() {
                             : undefined
                         }
                         key={`tile-${rowIndex}-${tileIndex}`}
+                        title={hasGuess ? "Cycle mark" : undefined}
                       >
                         {row.letters[tileIndex] ?? ""}
-                      </div>
+                      </button>
                     );
                   })}
 
@@ -1769,8 +1820,8 @@ export default function Home() {
                 </div>
               </div>
               <p className="text-[#9c9ca0]">
-                Irvine gives free bank words. Irvine+ gives clue text. Pro has
-                no hints.
+                Irvine gives clue text. Irvine+ has no hints and no repeats.
+                Pro allows repeats.
               </p>
             </div>
           </section>
