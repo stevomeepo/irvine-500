@@ -59,6 +59,7 @@ const WORD_LIST = [
   "UCIPD",
   "LAKES",
 ];
+const FORCED_ANSWER = "TESLA";
 const WORD_CLUES = {
   ALTON: "Irvine road.",
   HMART: "A grocery spot.",
@@ -264,6 +265,10 @@ function playableWordsFor(modeId) {
 }
 
 function answerFor(modeId, gameOffset) {
+  if (FORCED_ANSWER) {
+    return FORCED_ANSWER;
+  }
+
   const playable = playableWordsFor(modeId);
   return playable[(dailyIndex() + gameOffset) % playable.length];
 }
@@ -712,10 +717,10 @@ export default function Home() {
     () => WORD_LIST.filter((word) => wordFitsMode(word, modeId)),
     [modeId],
   );
-  const answer = useMemo(
-    () => playableWords[(dailyIndex() + gameOffset) % playableWords.length],
-    [gameOffset, playableWords],
-  );
+  const answer = useMemo(() => answerFor(modeId, gameOffset), [
+    gameOffset,
+    modeId,
+  ]);
   const disabledLetters = useMemo(
     () => [],
     [],
