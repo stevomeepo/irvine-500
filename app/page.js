@@ -990,6 +990,7 @@ export default function Home() {
   }
 
   function clearCurrentRow() {
+    setMarks({});
     setCurrentGuess("");
     setInvalidRow(null);
     updateMessage("Cleared.");
@@ -1082,9 +1083,7 @@ export default function Home() {
     setCurrentGuess("");
 
     if (currentGuess === answer) {
-      setFinalLetterRows((rows) =>
-        rows.includes(submittedRow) ? rows : [...rows, submittedRow],
-      );
+      setFinalLetterRows(nextGuesses.map((_, rowIndex) => rowIndex));
 
       const result = {
         won: true,
@@ -1102,9 +1101,7 @@ export default function Home() {
           : "Solved. Irvine has been defeated.",
       );
     } else if (nextGuesses.length === MAX_ATTEMPTS) {
-      setFinalLetterRows((rows) =>
-        rows.includes(submittedRow) ? rows : [...rows, submittedRow],
-      );
+      setFinalLetterRows(nextGuesses.map((_, rowIndex) => rowIndex));
 
       const result = {
         won: false,
@@ -1384,6 +1381,7 @@ export default function Home() {
 
     return { feedback, guess, letters, score };
   });
+  const revealFinalLetters = Boolean(lastResult?.answer === answer);
   const winPercent = stats.played
     ? Math.round((stats.wins / stats.played) * 100)
     : 0;
@@ -1528,20 +1526,25 @@ export default function Home() {
                   key={`row-${rowIndex}`}
                 >
                   {Array.from({ length: LETTERS }, (_, tileIndex) => {
-                    const mark = marks[`${rowIndex}-${tileIndex}`];
+                    const mark = revealFinalLetters
+                      ? row.feedback?.[tileIndex]
+                      : marks[`${rowIndex}-${tileIndex}`];
                     const hasGuess = Boolean(row.guess);
+                    const canMarkTile = hasGuess && !revealFinalLetters;
 
                     return (
                       <button
                         type="button"
-                        onClick={() => hasGuess && cycleMark(rowIndex, tileIndex)}
-                        disabled={!hasGuess}
+                        onClick={() =>
+                          canMarkTile && cycleMark(rowIndex, tileIndex)
+                        }
+                        disabled={!canMarkTile}
                         className={`grid aspect-square min-h-0 min-w-0 place-items-center rounded-md text-[length:var(--board-font)] font-black leading-none uppercase transition ${markClasses(
                           mark,
                         )} ${
                           shouldAnimateLetters
                             ? "letter-reveal hover:brightness-110"
-                            : hasGuess
+                            : canMarkTile
                               ? "hover:brightness-110"
                               : ""
                         }`}
@@ -1551,7 +1554,7 @@ export default function Home() {
                             : undefined
                         }
                         key={`tile-${rowIndex}-${tileIndex}`}
-                        title={hasGuess ? "Cycle mark" : undefined}
+                        title={canMarkTile ? "Cycle mark" : undefined}
                       >
                         {row.letters[tileIndex] ?? ""}
                       </button>
@@ -1653,7 +1656,7 @@ export default function Home() {
                     ? "w-[calc(var(--key-width)*1.65)]"
                     : "w-[calc(var(--key-width)*2.65+var(--key-gap))]"
                 }`}
-                title="Clear row"
+                title="Clear marks"
               >
                 CLR
               </button>
@@ -1798,12 +1801,12 @@ export default function Home() {
 
             <div className="mt-5 space-y-3 text-sm font-semibold leading-6 text-[#d8d8da]">
               <p>
-                Enter a real 5-letter word. Use the keyboard, or tap the keys
-                on screen.
+                Guess the secret Irvine500 word in 8 tries. Every guess must be
+                a real 5-letter word, including words from the Irvine bank.
               </p>
               <p>
-                After each guess, the three score boxes tell you how many
-                letters are green, yellow, and red.
+                The three score boxes on the right only show counts. They do
+                not tell you which exact letters are correct.
               </p>
               <div className="grid gap-2 rounded-lg bg-[#2b2b2f] p-3">
                 <div className="flex items-center gap-3">
@@ -1819,6 +1822,14 @@ export default function Home() {
                   <span>Red: letter is not in the answer.</span>
                 </div>
               </div>
+              <p>
+                Click your letter tiles to mark your own notes: blank, red,
+                yellow, then green. Use CLR to reset those marks.
+              </p>
+              <p>
+                Space inserts an underscore placeholder while you think through
+                a possible word. On a physical keyboard, Space or hyphen works.
+              </p>
               <p className="text-[#9c9ca0]">
                 Irvine gives clue text. Irvine+ has no hints and no repeats.
                 Pro allows repeats.
