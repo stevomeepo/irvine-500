@@ -59,7 +59,6 @@ const WORD_LIST = [
   "UCIPD",
   "LAKES",
 ];
-const FORCED_ANSWER = "TESLA";
 const WORD_CLUES = {
   ALTON: "Irvine road.",
   HMART: "A grocery spot.",
@@ -265,10 +264,6 @@ function playableWordsFor(modeId) {
 }
 
 function answerFor(modeId, gameOffset) {
-  if (FORCED_ANSWER) {
-    return FORCED_ANSWER;
-  }
-
   const playable = playableWordsFor(modeId);
   return playable[(dailyIndex() + gameOffset) % playable.length];
 }
